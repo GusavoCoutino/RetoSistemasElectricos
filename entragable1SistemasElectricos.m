@@ -1,11 +1,19 @@
 clear;
 clc;
 
-xline(0,Color="red");
-xline(3, Color="red");
+inicioCampoPositivo = input("Donde quieres que empiece el campo positivo?");
+finalCampoPositivo = input("Donde quieres que termine el campo positivo?");
 
-xline(12, Color="blue");
+inicioCampoNegativo = input("Donde quieres que empiece el campo negativo?");
+finalCampoNegativo = input("Donde quieres que termine el campo negativo?");
+
+
+
+xline(0,Color="red");
+line([3 3], [inicioCampoPositivo finalCampoPositivo], 'Color', 'r');
+
 xline(15, Color="blue");
+line([12 12], [inicioCampoNegativo finalCampoNegativo], 'Color', 'b');
 
 hold on
 inicio = [3 0];
@@ -56,13 +64,6 @@ dey3 = ke*(q)/(r3^3)*dy3;
 detXFinal = dex+dex2+dex3;
 detYFinal = dey+dey2+dey3;
 
-hold on
-plot(x2,y2)
-hold on
-plot(x2, y3)
-hold on
-plot(x2, y4);
-hold on
 quiver(x,y,detXFinal/5, detYFinal)
 hold on
 quiver(x2,y2,-detXFinal/5, detYFinal)
@@ -71,4 +72,3 @@ quiver(x2,y3,-detXFinal/5, detYFinal)
 hold on
 quiver(x2,y4,-detXFinal/5, detYFinal)
 hold on
-
