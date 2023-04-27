@@ -1,74 +1,102 @@
 clear;
 clc;
 
-inicioCampoPositivo = input("Donde quieres que empiece el campo positivo?");
-finalCampoPositivo = input("Donde quieres que termine el campo positivo?");
+%Pide el tamano del campo electrico de cada lado
+inicioCampoPositivo = input("Donde quieres que empiece el campo positivo? ");
+finalCampoPositivo = input("Donde quieres que termine el campo positivo? ");
 
-inicioCampoNegativo = input("Donde quieres que empiece el campo negativo?");
-finalCampoNegativo = input("Donde quieres que termine el campo negativo?");
+inicioCampoNegativo = input("Donde quieres que empiece el campo negativo? ");
+finalCampoNegativo = input("Donde quieres que termine el campo negativo? ");
 
 
 
-xline(0,Color="red");
-line([3 3], [inicioCampoPositivo finalCampoPositivo], 'Color', 'r');
+% Pide numero de cargas
+cargasPositivas = input("Ingresa el numero de cargas positivas: ");
+cargasNegativas = input("Ingresa el numero de cargas negativas: ");
 
-xline(15, Color="blue");
-line([12 12], [inicioCampoNegativo finalCampoNegativo], 'Color', 'b');
+% Inicializa los arreglos para las cargas
+x = zeros(1,cargasPositivas);
+y = zeros(1,cargasPositivas);
+q = zeros(1,cargasPositivas);
+x2 = zeros(1,cargasPositivas);
+y2 = zeros(1,cargasPositivas);
+q2 = zeros(1,cargasPositivas);
 
+% Obtiene coordenadas y magnitud por carga
+for i = 1:cargasPositivas
+    x(i) = input(sprintf("Ingresa la coordenada x para la carga %d: ", i));
+    y(i) = input(sprintf("Ingresa la coordenada y para la carga %d: ", i));
+    q(i) = input(sprintf("Ingresa la magnitud de la carga %d: ", i));
+end
+
+for i = 1:cargasNegativas
+    x2(i) = input(sprintf("Ingresa la coordenada x para la carga %d: ", i));
+    y2(i) = input(sprintf("Ingresa la coordenada y para la carga %d: ", i));
+    q2(i) = input(sprintf("Ingresa la magnitud de la carga %d: ", i));
+end
+
+% Crea los puntos para calcular el campo electrico 
+[xx, yy] = meshgrid(0:1:30, 0:1:30);
+
+% Calculo de cada carga electrica positiva
+k = 9e9;  
+ex = 0;
+ey = 0;
+for i = 1:cargasPositivas
+    dx = xx - x(i);
+    dy = yy - y(i);
+    r = sqrt(dx.^2 + dy.^2);
+    ex = ex + k * q(i) * dx ./ r.^3;
+    ey = ey + k * q(i) * dy ./ r.^3;
+end
+
+% Calculo de cada carga electrica negativas
+ex2 = 0;
+ey2 = 0;
+for i = 1:cargasNegativas
+    dx2 = xx - x2(i);
+    dy2 = yy - y2(i);
+    r2 = sqrt(dx2.^2 + dy2.^2);
+    ex2 = ex2 + k * q2(i) * dx2 ./ r2.^3;
+    ey2 = ey2 + k * q2(i) * dy2 ./ r2.^3;
+end
+
+
+
+% Grafica los vectores de las cargas positivas
+quiver(xx, yy, ex, ey, 2)
 hold on
-inicio = [3 0];
-final = [12 0];
-
-espacioPuntos = final-inicio;
-
-axis([0 18 0 18]);
-
-x = 3;
-y = input("Que coordenada en y quieres?");
-ultimoPuntoX = 12 - x;
-
-x2 = 12;
-y2 = input("Que coordenada en y quieres para el segundo punto?");
 
 
-y3 = input("Que coordenada en y quieres? (Segunda coordenada)");
-y4 = input("Que coordenada en y quieres? (Tercera coordenada)");
-
-
-q = 11*10^-8;
-ke = 8.9875517873681764*10^9;
-
-
-dx = x2-x;
-dy = y2-y;
-r = sqrt(dx^2+dy^2);
-
-dex = ke*(q)/(r^3)*dx;        
-dey = ke*(q)/(r^3)*dy;
-
-dx2 = x2-x;
-dy2 = y3-y;
-r2 = sqrt(dx2^2+dy2^2);
-
-dex2 = ke*(q)/(r2^3)*dx2;        
-dey2 = ke*(q)/(r2^3)*dy2;
-
-dx3 = x2-x;
-dy3 = y4-y;
-r3 = sqrt(dx3^2+dy3^2);
-
-dex3 = ke*(q)/(r3^3)*dx3;        
-dey3 = ke*(q)/(r3^3)*dy3;
-
-% Suma final
-detXFinal = dex+dex2+dex3;
-detYFinal = dey+dey2+dey3;
-
-quiver(x,y,detXFinal/5, detYFinal)
+% Grafica los vectores de las cargas negativas
+quiver(xx, yy, ex2, ey2, 2)
 hold on
-quiver(x2,y2,-detXFinal/5, detYFinal)
-hold on
-quiver(x2,y3,-detXFinal/5, detYFinal)
-hold on
-quiver(x2,y4,-detXFinal/5, detYFinal)
-hold on
+
+% Crea las placas positivas y negativas
+xline(0, 'r', 'LineWidth', 2)
+line([3 3], [inicioCampoPositivo finalCampoPositivo], 'Color', 'r', 'LineWidth', 2)
+line([12 12], [inicioCampoNegativo finalCampoNegativo], 'Color', 'b', 'LineWidth', 2)
+xline(15, 'b', 'LineWidth', 2)
+
+% Grafica las cargas
+for i = 1:cargasPositivas
+    if q(i) > 0
+        plot(x(i), y(i), 'ro', 'MarkerSize', 8, 'LineWidth', 2)
+    else
+        plot(x(i), y(i), 'bo', 'MarkerSize', 8, 'LineWidth', 2)
+    end
+end
+
+
+for i = 1:cargasNegativas
+    if q(i) > 0
+        plot(x2(i), y2(i), 'ro', 'MarkerSize', 8, 'LineWidth', 2)
+    else
+        plot(x2(i), y2(i), 'bo', 'MarkerSize', 8, 'LineWidth', 2)
+    end
+end
+
+xlabel('x')
+ylabel('y')
+title('Campo electrico')
+axis equal
